@@ -13,11 +13,13 @@ Petits outils web déployés sur [www.connectable-web.com](https://www.connectab
 
 ```
 .
+├── home/
+│   └── index.html                # Landing page minimaliste (copiée vers dist/index.html)
 ├── tools/
-│   ├── velocity-calculator/      # App Vite + Tailwind (buildée vers dist/)
+│   ├── velocity-calculator/      # App Vite + Tailwind (buildée vers dist/tools/velocity-calculator/)
 │   └── interval-timer/           # App statique HTML/JS/PWA (copiée vers dist/tools/interval-timer/)
 ├── vite.config.js
-├── vercel.json                   # Rewrites + redirects + headers
+├── vercel.json                   # Headers de sécurité + trailing slash
 └── package.json
 ```
 

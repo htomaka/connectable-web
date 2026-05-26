@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && mkdir -p dist/tools && cp -R tools/interval-timer dist/tools/interval-timer",
+    "build": "rm -rf dist && vite build && cp -R tools/interval-timer dist/tools/interval-timer && cp home/index.html dist/index.html",
     "preview": "vite preview",
     "start": "vite preview"
   },

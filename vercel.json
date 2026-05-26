@@ -11,19 +11,6 @@
       }
     }
   ],
-  "rewrites": [
-    {
-      "source": "/tools/velocity-calculator/(.*)",
-      "destination": "/$1"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/tools/velocity-calculator/",
-      "permanent": true
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",

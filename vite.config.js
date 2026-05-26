@@ -5,7 +5,7 @@ export default defineConfig({
   base: '/tools/velocity-calculator/',
   publicDir: false,
   build: {
-    outDir: '../../dist',
+    outDir: '../../dist/tools/velocity-calculator',
     emptyOutDir: true,
     rollupOptions: {
       input: './tools/velocity-calculator/index.html'

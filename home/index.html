@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>connectable-web — Petits outils</title>
+    <meta name="description" content="Petits outils web : calculateur de capacité de sprint, timer d'intervalles.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+            color: #1f2937;
+            background: #f9fafb;
+            line-height: 1.6;
+        }
+        h1 { font-size: 1.75rem; margin: 0 0 0.25rem; }
+        .tagline { color: #6b7280; margin: 0 0 2.5rem; }
+        ul { list-style: none; padding: 0; margin: 0; }
+        li + li { margin-top: 0.75rem; }
+        a.tool {
+            display: block;
+            padding: 1.25rem 1.5rem;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            color: inherit;
+            text-decoration: none;
+            transition: border-color 0.15s ease, transform 0.15s ease;
+        }
+        a.tool:hover { border-color: #2563eb; transform: translateY(-1px); }
+        .tool-name { font-weight: 600; font-size: 1.05rem; }
+        .tool-desc { color: #6b7280; font-size: 0.925rem; margin-top: 0.25rem; }
+        footer { margin-top: 3rem; color: #9ca3af; font-size: 0.85rem; }
+        footer a { color: inherit; }
+    </style>
+</head>
+<body>
+    <h1>connectable-web</h1>
+    <p class="tagline">Petits outils web.</p>
+    <ul>
+        <li>
+            <a class="tool" href="/tools/velocity-calculator/">
+                <div class="tool-name">Sprint Velocity Calculator</div>
+                <div class="tool-desc">Capacité de sprint agile à partir de la vélocité, des jours ouvrés et des absences.</div>
+            </a>
+        </li>
+        <li>
+            <a class="tool" href="/tools/interval-timer/">
+                <div class="tool-name">Interval Timer</div>
+                <div class="tool-desc">Timer d'intervalles pour entraînements. Fonctionne hors-ligne (PWA).</div>
+            </a>
+        </li>
+    </ul>
+    <footer>
+        <a href="https://github.com/htomaka/connectable-web">Code source</a>
+    </footer>
+</body>
+</html>
