@@ -1,6 +1,7 @@
 {
   "version": 2,
   "name": "connectable-web",
+  "trailingSlash": true,
   "builds": [
     {
       "src": "package.json",
