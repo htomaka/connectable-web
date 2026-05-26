@@ -1,0 +1,19 @@
+{
+  "name": "Interval Timer",
+  "short_name": "Timer",
+  "description": "Minimalist interval timer for workouts. Configure work, rest, reps, save presets, run sessions full-screen.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f0f10",
+  "theme_color": "#0f0f10",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%2316a34a'/><circle cx='256' cy='280' r='150' fill='none' stroke='white' stroke-width='28'/><path d='M256 170v110l70 50' stroke='white' stroke-width='28' stroke-linecap='round' fill='none'/><rect x='216' y='90' width='80' height='30' rx='8' fill='white'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

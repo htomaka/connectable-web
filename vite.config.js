@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   root: './src',
   base: '/tools/velocity-calculator/',
+  publicDir: '../public',
   build: {
     outDir: '../dist',
     rollupOptions: {

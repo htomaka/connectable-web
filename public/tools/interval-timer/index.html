@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0f0f10" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Interval Timer" />
+  <title>Interval Timer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2316a34a'/%3E%3Cpath d='M50 20v30l20 10' stroke='white' stroke-width='6' stroke-linecap='round' fill='none'/%3E%3C/svg%3E" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- LIST -->
+    <section class="screen active" id="screen-list">
+      <header class="header">
+        <h1>Mes timers</h1>
+        <button class="icon-btn" id="btn-new" aria-label="Nouveau">+</button>
+      </header>
+      <div id="list-container" class="list-container"></div>
+    </section>
+
+    <!-- EDIT -->
+    <section class="screen" id="screen-edit">
+      <header class="header">
+        <button class="icon-btn" id="btn-back-edit" aria-label="Retour">←</button>
+        <h1 id="edit-title">Nouveau</h1>
+        <div class="spacer-44"></div>
+      </header>
+
+      <div class="field">
+        <label for="f-name">Nom</label>
+        <input type="text" id="f-name" placeholder="ex: HIIT matinal" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label for="f-work">Temps de travail (sec)</label>
+        <div class="stepper">
+          <button type="button" data-step="f-work" data-delta="-5" aria-label="Diminuer">−</button>
+          <input type="number" id="f-work" inputmode="numeric" min="1" max="3600" value="30" />
+          <button type="button" data-step="f-work" data-delta="5" aria-label="Augmenter">+</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-rest">Temps de repos (sec)</label>
+        <div class="stepper">
+          <button type="button" data-step="f-rest" data-delta="-5" aria-label="Diminuer">−</button>
+          <input type="number" id="f-rest" inputmode="numeric" min="0" max="3600" value="15" />
+          <button type="button" data-step="f-rest" data-delta="5" aria-label="Augmenter">+</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-reps">Nombre de répétitions</label>
+        <div class="stepper">
+          <button type="button" data-step="f-reps" data-delta="-1" aria-label="Diminuer">−</button>
+          <input type="number" id="f-reps" inputmode="numeric" min="1" max="100" value="8" />
+          <button type="button" data-step="f-reps" data-delta="1" aria-label="Augmenter">+</button>
+        </div>
+      </div>
+
+      <button class="primary-btn full-width" id="btn-save">Sauvegarder</button>
+    </section>
+
+    <!-- RUN -->
+    <section class="screen" id="screen-run">
+      <div class="runner idle" id="runner">
+        <header class="runner-header">
+          <button class="icon-btn" id="btn-back-run" aria-label="Quitter">✕</button>
+          <div class="runner-title" id="run-title">Timer</div>
+          <div class="spacer-44"></div>
+        </header>
+
+        <div class="runner-body">
+          <div class="phase-label" id="phase">Prêt</div>
+          <div class="big-time" id="time">00:30</div>
+          <div class="rep-info" id="reps">Répétition 1 / 8</div>
+          <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+        </div>
+
+        <div class="runner-controls">
+          <button type="button" id="btn-reset">Reset</button>
+          <button type="button" class="play" id="btn-play">Démarrer</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

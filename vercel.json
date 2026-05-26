@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "sprint-velocity-calculator",
+  "name": "connectable-web",
   "builds": [
     {
       "src": "package.json",

@@ -1,7 +1,7 @@
 {
-  "name": "sprint-velocity-calculator",
+  "name": "connectable-web",
   "version": "1.0.0",
-  "description": "Calculateur de capacité de sprint basé sur la vélocité de référence, les jours ouvrés et les absences",
+  "description": "Tools hub deployed at connectable-web.com — small standalone web tools (sprint velocity calculator, interval timer, …)",
   "main": "index.html",
   "type": "module",
   "scripts": {

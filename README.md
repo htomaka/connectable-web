@@ -1,69 +1,39 @@
-# Sprint Velocity Calculator
+# connectable-web
 
-Calculateur de capacité de sprint agile basé sur la vélocité de référence, les jours ouvrés et les absences.
+Petits outils web déployés sur [www.connectable-web.com](https://www.connectable-web.com/).
 
-## 🚀 Déploiement
+## Outils
 
-Ce projet est déployé sur Vercel : https://sprint-velocity-calculator.vercel.app/
+| URL | Source | Description |
+| --- | --- | --- |
+| [`/tools/velocity-calculator/`](https://www.connectable-web.com/tools/velocity-calculator/) | [`src/`](./src) | Calculateur de capacité de sprint agile (Vite + Tailwind) |
+| [`/tools/interval-timer/`](https://www.connectable-web.com/tools/interval-timer/) | [`public/tools/interval-timer/`](./public/tools/interval-timer) | Timer d'intervalles pour entraînements (HTML/JS vanilla, PWA) |
 
-## 📋 Fonctionnalités
+## Structure
 
-- Calcul de la capacité de sprint en fonction de la vélocité de référence
-- Prise en compte des absences par développeur
-- Répartition entre capacité de build et capacité technique
-- Interface responsive et moderne avec Tailwind CSS
-
-## 🛠️ Installation et développement
-
-1. Clonez le dépôt :
-   ```bash
-   git clone git@github.com:htomaka/sprint-velocity-calculator.git
-   cd sprint-velocity-calculator
-   ```
-
-2. Installez les dépendances :
-   ```bash
-   npm install
-   ```
-
-3. Lancez le serveur de développement :
-   ```bash
-   npm run dev
-   ```
-
-L'application sera disponible sur http://localhost:3000
-
-## 📦 Build
-
-Le projet est un site statique, aucun build n'est nécessaire :
-```bash
-npm run build
+```
+.
+├── src/                          # Velocity calculator (build Vite)
+├── public/                       # Assets servis tels quels par Vite
+│   └── tools/
+│       └── interval-timer/       # Outils statiques, copiés vers dist/tools/<name>/
+├── vite.config.js
+├── vercel.json                   # Rewrites + redirects + headers
+└── package.json
 ```
 
-## 🌐 Déploiement sur Vercel
+## Développement
 
-Le projet est configuré pour être déployé sur Vercel avec :
+```bash
+npm install
+npm run dev      # vite, serveur sur http://localhost:3000
+npm run build    # produit dist/
+```
 
-- `vercel.json` : configuration des routes et en-têtes de sécurité
-- `package.json` : scripts de build et dépendances
-- `robots.txt` et `sitemap.xml` : optimisation SEO
+## Déploiement
 
-## 📊 Utilisation
+Push sur `master` → déploiement automatique sur Vercel (projet branché sur `connectable-web.com`).
 
-1. Saisissez la vélocité de référence de votre équipe
-2. Indiquez le nombre de développeurs
-3. Précisez les jours ouvrés du sprint
-4. Définissez le pourcentage dédié au build
-5. Ajoutez les absences prévues par développeur
-6. Cliquez sur "Calculer la capacité"
+## Licence
 
-## 🔧 Technologies
-
-- HTML5
-- Tailwind CSS (via CDN)
-- JavaScript vanilla
-- Vercel (hébergement)
-
-## 📄 Licence
-
-MIT License
+MIT
