@@ -6,17 +6,16 @@ Petits outils web déployés sur [www.connectable-web.com](https://www.connectab
 
 | URL | Source | Description |
 | --- | --- | --- |
-| [`/tools/velocity-calculator/`](https://www.connectable-web.com/tools/velocity-calculator/) | [`src/`](./src) | Calculateur de capacité de sprint agile (Vite + Tailwind) |
-| [`/tools/interval-timer/`](https://www.connectable-web.com/tools/interval-timer/) | [`public/tools/interval-timer/`](./public/tools/interval-timer) | Timer d'intervalles pour entraînements (HTML/JS vanilla, PWA) |
+| [`/tools/velocity-calculator/`](https://www.connectable-web.com/tools/velocity-calculator/) | [`tools/velocity-calculator/`](./tools/velocity-calculator) | Calculateur de capacité de sprint agile (Vite + Tailwind) |
+| [`/tools/interval-timer/`](https://www.connectable-web.com/tools/interval-timer/) | [`tools/interval-timer/`](./tools/interval-timer) | Timer d'intervalles pour entraînements (HTML/JS vanilla, PWA) |
 
 ## Structure
 
 ```
 .
-├── src/                          # Velocity calculator (build Vite)
-├── public/                       # Assets servis tels quels par Vite
-│   └── tools/
-│       └── interval-timer/       # Outils statiques, copiés vers dist/tools/<name>/
+├── tools/
+│   ├── velocity-calculator/      # App Vite + Tailwind (buildée vers dist/)
+│   └── interval-timer/           # App statique HTML/JS/PWA (copiée vers dist/tools/interval-timer/)
 ├── vite.config.js
 ├── vercel.json                   # Rewrites + redirects + headers
 └── package.json
