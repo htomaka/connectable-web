@@ -49,7 +49,7 @@
             <circle cx="12" cy="13" r="8"/>
             <path d="M12 9v4l2 2M9 2h6"/>
           </svg>
-          <div>Aucun timer pour le moment.<br/>Appuie sur + pour en créer un.</div>
+          <div>Aucun timer pour le moment.<br/>Appuyez sur + pour créer votre premier timer.</div>
         </div>`;
       return;
     }

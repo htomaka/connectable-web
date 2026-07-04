@@ -1,7 +1,7 @@
 {
   "name": "Cadence — Métronome de course",
   "short_name": "Cadence",
-  "description": "Métronome pour la course à pied : réglez votre cadence (pas/min) et calez votre foulée sur un battement audio précis, sans dérive, par-dessus votre musique. Fonctionne hors-ligne.",
+  "description": "Métronome de course à pied : choisissez votre cadence (pas/min) et laissez le rythme guider votre foulée. Une allure régulière, plus légère et plus fluide, kilomètre après kilomètre, par-dessus votre musique. Gratuit et hors-ligne.",
   "id": "/tools/cadence/",
   "start_url": "./",
   "scope": "./",

@@ -1,7 +1,7 @@
 {
   "name": "Timer d'intervalles",
   "short_name": "Timer",
-  "description": "Minuteur d'intervalles pour vos séances HIIT et fractionné : réglez travail, repos et répétitions, enregistrez vos presets et lancez la séance en plein écran. Hors-ligne.",
+  "description": "Minuteur d'intervalles pour le HIIT et le fractionné : lancez votre séance et concentrez-vous sur l'effort, plus sur le chrono. Des signaux nets à chaque changement travail/repos, en plein écran et mains libres. Gratuit et hors-ligne.",
   "id": "/tools/interval-timer/",
   "start_url": "./",
   "scope": "./",

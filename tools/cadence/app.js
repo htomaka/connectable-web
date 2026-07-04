@@ -78,7 +78,6 @@
     tapSub: $('tap-sub'), soundValue: $('sound-value'), soundBtn: $('sound-btn'),
     startIcon: $('start-icon'), startLabel: $('start-label'), start: $('start'),
     chips: $('chips'), soundList: $('sound-list'), volCells: $('vol-cells'), patterns: $('patterns'),
-    splash: $('splash'),
   };
 
   // ---------- Audio ----------
@@ -355,9 +354,6 @@
   function openSheet() { ensureAudio(); app.classList.add('sheet-open'); }
   function closeSheet() { app.classList.remove('sheet-open'); }
 
-  // ---------- Splash ----------
-  function enterApp() { el.splash.classList.add('hidden'); ensureAudio(); }
-
   // ---------- Transport ----------
   function toggleRun() { ensureAudio(); state.running ? stopRun() : startRun(); }
 
@@ -392,17 +388,11 @@
     $('scrim').addEventListener('click', closeSheet);
     el.start.addEventListener('click', toggleRun);
 
-    el.splash.addEventListener('click', enterApp);
-    el.splash.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterApp(); }
-    });
-
     // Barre d'espace : start/stop desktop (FR-9)
     document.addEventListener('keydown', function (e) {
       if (e.code !== 'Space') return;
       var tag = (e.target && e.target.tagName) || '';
       if (tag === 'BUTTON' || tag === 'INPUT' || tag === 'TEXTAREA') return;
-      if (!el.splash.classList.contains('hidden')) return;
       e.preventDefault(); toggleRun();
     });
 

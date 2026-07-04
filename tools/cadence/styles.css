@@ -288,29 +288,6 @@ button { font-family: inherit; }
 }
 .pattern.selected { background: var(--accent); color: var(--dark); border-color: var(--accent); }
 
-/* ---------- Splash ---------- */
-.splash {
-  position: absolute; inset: 0; z-index: 40; cursor: pointer;
-  background: radial-gradient(120% 90% at 50% 32%, #17262e, var(--bg) 72%);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: opacity .5s ease;
-}
-.splash.hidden { opacity: 0; pointer-events: none; }
-.splash-marks { display: flex; gap: 16px; margin-bottom: 40px; }
-.splash-mark {
-  width: 66px; height: 84px; border-radius: 20px; background: var(--surface);
-  box-shadow: inset 0 0 0 2px rgba(255, 182, 72, 0.92), 0 0 42px rgba(255, 182, 72, 0.45);
-  display: flex; align-items: center; justify-content: center;
-  animation: cad-splashpulse 1.02s ease-in-out infinite;
-}
-.splash-mark-r { animation-delay: .51s; }
-.splash-mark span { font-family: var(--display); font-weight: 700; font-size: 44px; color: var(--accent-lit); line-height: 1; }
-.splash-title { font-family: var(--display); font-weight: 700; font-size: 48px; color: var(--text); letter-spacing: .01em; line-height: 1; }
-.splash-sub { font-family: var(--mono); font-size: 12px; letter-spacing: .32em; color: var(--text-3); margin-top: 16px; }
-.splash-hint { position: absolute; bottom: calc(env(safe-area-inset-bottom) + 64px); font-family: var(--mono); font-size: 11px; letter-spacing: .2em; color: #5b6d75; }
-
-@keyframes cad-splashpulse { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
-
 /* ---------- Petits écrans : réduire le gigantisme ---------- */
 @media (max-height: 720px) {
   .cadence { font-size: 104px; }
@@ -324,6 +301,5 @@ button { font-family: inherit; }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .splash-mark { animation: none; opacity: .85; }
   .start-btn, .chip, .sound-row, .vol-cell, .pattern { transition: none; }
 }
