@@ -365,25 +365,9 @@
     lastTouch = now;
   }, { passive: false });
 
-  // Service worker: register + auto-update installed PWAs.
-  // (silently fails on file:// or unsupported browsers)
-  if ('serviceWorker' in navigator) {
-    // A new worker took control -> reload once to pick up fresh assets.
-    // Skip the very first install (no prior controller) to avoid a reload loop.
-    let hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!hadController) { hadController = true; return; }
-      window.location.reload();
-    });
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').then((reg) => {
-        // Check for a new version each time the app is reopened/refocused.
-        document.addEventListener('visibilitychange', () => {
-          if (document.visibilityState === 'visible') reg.update();
-        });
-      }).catch(() => {});
-    });
-  }
+  // PWA: invite d'installation + invite de mise à jour (au lieu d'un reload silencieux
+  // qui couperait un timer en cours). Silencieux sur file:// / navigateurs non compatibles.
+  setupPWA();
 
   // Source de ticks : Web Worker (non throttlé écran verrouillé), fallback setInterval.
   try { worker = new Worker('./scheduler.worker.js'); worker.onmessage = tick; }
@@ -391,4 +375,99 @@
 
   loadTimers();
   renderList();
+
+  // ---------- PWA : invite d'installation + invite de mise à jour ----------
+  function setupPWA() {
+    const bar = document.getElementById('app-bar');
+    if (!bar) return;
+    const DISMISS_KEY = 'interval-timer-install-dismissed';
+    const barText = document.getElementById('app-bar-text');
+    const barAction = document.getElementById('app-bar-action');
+    const barClose = document.getElementById('app-bar-close');
+    let mode = null;               // 'install' | 'update'
+    let deferredPrompt = null, waitingWorker = null;
+
+    const standalone = () =>
+      window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const dismissed = () => {
+      try { return localStorage.getItem(DISMISS_KEY) === '1'; } catch (e) { return false; }
+    };
+
+    // La mise à jour est prioritaire sur l'invite d'installation.
+    function offerUpdate(worker) {
+      waitingWorker = worker; mode = 'update';
+      barText.textContent = 'Nouvelle version disponible.';
+      barAction.textContent = 'Recharger'; barAction.hidden = false; barAction.disabled = false;
+      bar.hidden = false;
+    }
+    function offerInstall(kind) {
+      if (mode === 'update' || standalone() || dismissed()) return;
+      mode = 'install';
+      if (kind === 'ios') {
+        barText.textContent = "Installer : Partager, puis « Sur l'écran d'accueil ».";
+        barAction.hidden = true;
+      } else {
+        barText.textContent = "Installez l'app sur votre écran d'accueil.";
+        barAction.textContent = 'Installer'; barAction.hidden = false; barAction.disabled = false;
+      }
+      bar.hidden = false;
+    }
+
+    barAction.addEventListener('click', () => {
+      if (mode === 'update' && waitingWorker) {
+        barAction.disabled = true; barText.textContent = 'Mise à jour…';
+        waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+      } else if (mode === 'install' && deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.catch(() => {}).then(() => { deferredPrompt = null; bar.hidden = true; mode = null; });
+      }
+    });
+    barClose.addEventListener('click', () => {
+      bar.hidden = true;
+      if (mode === 'install') { try { localStorage.setItem(DISMISS_KEY, '1'); } catch (e) {} }
+      mode = null;
+    });
+
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; offerInstall(); });
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null; if (mode === 'install') { bar.hidden = true; mode = null; }
+    });
+
+    // iOS Safari n'émet jamais beforeinstallprompt → invite manuelle.
+    // iPadOS se présente comme un Mac : détecté via l'écran tactile.
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
+      || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isSafari = /^((?!chrome|crios|fxios|android).)*safari/i.test(navigator.userAgent);
+    if (isIOS && isSafari) setTimeout(() => offerInstall('ios'), 2500);
+
+    if ('serviceWorker' in navigator) {
+      let refreshing = false;
+      let hadController = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!hadController) { hadController = true; return; }   // 1er install : pas de reload
+        if (refreshing) return; refreshing = true; window.location.reload();
+      });
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          if (reg.waiting && navigator.serviceWorker.controller) offerUpdate(reg.waiting);
+          reg.addEventListener('updatefound', () => {
+            const nw = reg.installing;
+            if (!nw) return;
+            nw.addEventListener('statechange', () => {
+              if (nw.state === 'installed' && navigator.serviceWorker.controller) offerUpdate(nw);
+            });
+          });
+          // Au retour au premier plan, au plus une fois / 30 min (évite un fetch de sw.js
+          // à chaque bascule pendant une séance).
+          let lastUpdate = 0;
+          document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState !== 'visible') return;
+            const now = Date.now();
+            if (now - lastUpdate < 1800000) return;
+            lastUpdate = now; reg.update();
+          });
+        }).catch(() => {});
+      });
+    }
+  }
 })();

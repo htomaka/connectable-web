@@ -18,6 +18,27 @@ body {
 .screen { display: none; flex: 1; flex-direction: column; padding: 16px; }
 .screen.active { display: flex; }
 
+/* Barre PWA (install / mise à jour) */
+.app-bar {
+  flex: 0 0 auto;
+  display: flex; align-items: center; gap: 10px;
+  margin: 12px 16px 0; padding: 10px 12px 10px 14px;
+  border-radius: 14px;
+  background: #16211a; border: 1px solid rgba(22,163,74,0.4);
+}
+.app-bar[hidden] { display: none; }
+.app-bar-text { flex: 1; font-size: 13px; line-height: 1.35; color: #c8ccc9; }
+.app-bar-action {
+  flex: 0 0 auto; height: 36px; padding: 0 16px; border-radius: 10px; cursor: pointer;
+  font-weight: 700; font-size: 15px; background: #16a34a; color: #fff; border: none;
+}
+.app-bar-action[hidden] { display: none; }
+.app-bar-action:disabled { opacity: 0.6; cursor: default; }
+.app-bar-close {
+  flex: 0 0 auto; width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
+  background: transparent; border: 1px solid rgba(255,255,255,0.12); color: #9a9a9e; font-size: 14px;
+}
+
 .header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 8px 4px 20px;

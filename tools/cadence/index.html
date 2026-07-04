@@ -47,6 +47,13 @@
 <body>
   <div class="app" id="app">
 
+    <!-- Barre PWA : invite d'installation / de mise à jour (masquée tant que non éligible) -->
+    <div class="app-bar" id="app-bar" role="status" hidden>
+      <span class="app-bar-text" id="app-bar-text"></span>
+      <button type="button" class="app-bar-action" id="app-bar-action" hidden></button>
+      <button type="button" class="app-bar-close" id="app-bar-close" aria-label="Masquer">✕</button>
+    </div>
+
     <!-- Top: statut + chrono session -->
     <div class="topbar">
       <span class="status" id="status">

@@ -1,12 +1,17 @@
 // Minimal offline-first service worker.
 // Caches the app shell and serves it offline.
 
-const CACHE = 'interval-timer-v5';
+const CACHE = 'interval-timer-v6';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './scheduler.worker.js', './manifest.webmanifest', './icon-512.png', './icon-512-maskable.png'];
 
 self.addEventListener('install', (e) => {
+  // Pas de skipWaiting auto : le nouveau worker attend le bouton « Recharger »
+  // (message SKIP_WAITING) pour ne pas recharger en plein timer.
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)));
-  self.skipWaiting();
+});
+
+self.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {

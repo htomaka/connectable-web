@@ -1,6 +1,6 @@
 // Service worker offline-first : cache l'app-shell et la sert hors-ligne (FR-21).
 
-const CACHE = 'cadence-v2';
+const CACHE = 'cadence-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -19,8 +19,13 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
+  // Pas de skipWaiting auto : le nouveau worker attend le feu vert de l'utilisateur
+  // (bouton « Recharger » → message SKIP_WAITING) pour ne pas recharger en pleine séance.
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)));
-  self.skipWaiting();
+});
+
+self.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {

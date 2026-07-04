@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <meta name="theme-color" content="#0f0f10" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Timer d'intervalles" />
   <meta name="description" content="Minuteur d'intervalles pour vos séances HIIT et fractionné : réglez travail, repos et répétitions, enregistrez vos presets et lancez la séance en plein écran. Hors-ligne." />
@@ -15,6 +16,13 @@
 </head>
 <body>
   <div id="app">
+    <!-- Barre PWA : invite d'installation / de mise à jour (masquée tant que non éligible) -->
+    <div class="app-bar" id="app-bar" role="status" hidden>
+      <span class="app-bar-text" id="app-bar-text"></span>
+      <button type="button" class="app-bar-action" id="app-bar-action" hidden></button>
+      <button type="button" class="app-bar-close" id="app-bar-close" aria-label="Masquer">✕</button>
+    </div>
+
     <!-- LIST -->
     <section class="screen active" id="screen-list">
       <header class="header">
