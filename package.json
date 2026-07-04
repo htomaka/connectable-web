@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf dist && vite build && cp -R tools/interval-timer dist/tools/interval-timer && cp -R tools/cadence dist/tools/cadence && rm -f dist/tools/cadence/*.md && cp home/index.html dist/index.html && mkdir -p dist/.well-known && cp .well-known/assetlinks.json dist/.well-known/assetlinks.json",
+    "build": "rm -rf dist && vite build && cp -R tools/interval-timer dist/tools/interval-timer && cp -R tools/cadence dist/tools/cadence && rm -f dist/tools/cadence/*.md && cp home/index.html dist/index.html && cp sitemap.xml robots.txt dist/ && mkdir -p dist/.well-known && cp .well-known/assetlinks.json dist/.well-known/assetlinks.json",
     "preview": "vite preview",
     "start": "vite preview"
   },

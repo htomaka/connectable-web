@@ -9,7 +9,7 @@
   var VOL = [0.2, 0.45, 0.7, 1.0];
   var SOUNDS = [
     { id: 'bois', label: 'Bloc', desc: 'bois chaud' },
-    { id: 'clic', label: 'Clic', desc: 'sec & net' },
+    { id: 'clic', label: 'Clic', desc: 'sec, net' },
     { id: 'toc', label: 'Toc', desc: 'sourd, grave' },
     { id: 'onde', label: 'Onde', desc: 'douce, ronde' },
     { id: 'rim', label: 'Claque', desc: 'sèche, aiguë' },
@@ -75,7 +75,7 @@
     cadence: $('cadence'), chrono: $('chrono'),
     statusLabel: $('status-label'),
     padL: $('pad-l'), padR: $('pad-r'),
-    tapSub: $('tap-sub'), soundValue: $('sound-value'),
+    tapSub: $('tap-sub'), soundValue: $('sound-value'), soundBtn: $('sound-btn'),
     startIcon: $('start-icon'), startLabel: $('start-label'), start: $('start'),
     chips: $('chips'), soundList: $('sound-list'), volCells: $('vol-cells'), patterns: $('patterns'),
     splash: $('splash'),
@@ -269,18 +269,22 @@
   var chipCache = [];   // [{ node, cad }] — les 4 puces sont statiques, résolues une fois
   function updateChips() {
     for (var i = 0; i < chipCache.length; i++) {
-      chipCache[i].node.classList.toggle('selected', chipCache[i].cad === state.cadence);
+      var sel = chipCache[i].cad === state.cadence;
+      chipCache[i].node.classList.toggle('selected', sel);
+      chipCache[i].node.setAttribute('aria-pressed', sel ? 'true' : 'false');
     }
   }
   function updateTapSub() {
     var tc = state.tapCount;
     el.tapSub.textContent = tc > 0
       ? tc + ' tap' + (tc > 1 ? 's' : '') + ' · ' + state.cadence
-      : 'taper le rythme';
+      : 'Tapez le rythme';
   }
   function updateSoundLabel() {
     var s = SOUNDS.find(function (x) { return x.id === state.sound; });
-    el.soundValue.textContent = s ? s.label : 'Bloc';
+    var label = s ? s.label : 'Bloc';
+    el.soundValue.textContent = label;
+    el.soundBtn.setAttribute('aria-label', 'Réglages du son — son actuel : ' + label);
   }
   function updateTransport() {
     el.start.classList.toggle('is-running', state.running);
@@ -296,6 +300,8 @@
     SOUNDS.forEach(function (s) {
       var btn = document.createElement('button');
       btn.type = 'button'; btn.className = 'sound-row'; btn.setAttribute('data-sound', s.id);
+      btn.setAttribute('aria-pressed', 'false');
+      btn.setAttribute('aria-label', 'Son ' + s.label + ' — ' + s.desc);
       btn.innerHTML =
         '<span class="sound-row-info"><span class="sound-row-name">' + s.label +
         '</span><span class="sound-row-desc">' + s.desc + '</span></span>' +
@@ -307,6 +313,8 @@
     VOL.forEach(function (_, i) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'vol-cell'; b.textContent = String(i + 1);
+      b.setAttribute('aria-pressed', 'false');
+      b.setAttribute('aria-label', 'Volume ' + (i + 1) + ' sur ' + VOL.length);
       b.addEventListener('click', function () { setVol(i); });
       el.volCells.appendChild(b);
     });
@@ -314,6 +322,7 @@
     PATTERNS.forEach(function (p) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'pattern'; b.setAttribute('data-pattern', p.id); b.textContent = p.label;
+      b.setAttribute('aria-pressed', 'false');
       b.addEventListener('click', function () { setPattern(p.id); });
       el.patterns.appendChild(b);
     });
@@ -323,13 +332,18 @@
     el.soundList.querySelectorAll('.sound-row').forEach(function (n) {
       var sel = n.getAttribute('data-sound') === state.sound;
       n.classList.toggle('selected', sel);
-      n.querySelector('.sound-row-badge').textContent = sel ? '✓ ACTIF' : 'aperçu';
+      n.setAttribute('aria-pressed', sel ? 'true' : 'false');
+      // Seul le son actif est badgé ; le clic sur une autre ligne la sélectionne aussi (pas un simple aperçu).
+      n.querySelector('.sound-row-badge').textContent = sel ? '✓ ACTIF' : '';
     });
     el.volCells.querySelectorAll('.vol-cell').forEach(function (n, i) {
       n.classList.toggle('filled', i <= state.volIndex);
+      n.setAttribute('aria-pressed', i === state.volIndex ? 'true' : 'false');
     });
     el.patterns.querySelectorAll('.pattern').forEach(function (n) {
-      n.classList.toggle('selected', n.getAttribute('data-pattern') === state.pattern);
+      var sel = n.getAttribute('data-pattern') === state.pattern;
+      n.classList.toggle('selected', sel);
+      n.setAttribute('aria-pressed', sel ? 'true' : 'false');
     });
   }
   function selectSound(id) { state.sound = id; updateSoundLabel(); updateSheet(); savePrefs(); preview(id); }

@@ -9,7 +9,36 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Cadence" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <title>Cadence — Métronome de course</title>
+  <title>Cadence — métronome de course à pied (pas/min)</title>
+  <link rel="canonical" href="https://www.connectable-web.com/tools/cadence/" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="connectable-web" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:url" content="https://www.connectable-web.com/tools/cadence/" />
+  <meta property="og:title" content="Cadence — Métronome de course" />
+  <meta property="og:description" content="Réglez votre cadence (pas/min) et calez votre foulée sur un battement audio précis, sans dérive, par-dessus votre musique. Gratuit, hors-ligne." />
+  <meta property="og:image" content="https://www.connectable-web.com/tools/cadence/icon-512.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Cadence — Métronome de course" />
+  <meta name="twitter:description" content="Calez votre foulée sur un battement audio précis, sans dérive, par-dessus votre musique. Gratuit, hors-ligne." />
+  <meta name="twitter:image" content="https://www.connectable-web.com/tools/cadence/icon-512.png" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Cadence — Métronome de course",
+    "url": "https://www.connectable-web.com/tools/cadence/",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Web, Android, iOS",
+    "inLanguage": "fr",
+    "description": "Métronome de course : réglez votre cadence (pas/min) et calez votre foulée sur un battement audio précis, sans dérive, par-dessus votre musique.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+  }
+  </script>
+
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='23' fill='%2316232a'/%3E%3Ctext x='28' y='66' font-family='Arial' font-weight='700' font-size='48' fill='%23ffc266'%3EL%3C/text%3E%3Ctext x='54' y='66' font-family='Arial' font-weight='700' font-size='48' fill='%234d5f67'%3ER%3C/text%3E%3C/svg%3E" />
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='23' fill='%2316232a'/%3E%3Ctext x='28' y='66' font-family='Arial' font-weight='700' font-size='48' fill='%23ffc266'%3EL%3C/text%3E%3Ctext x='54' y='66' font-family='Arial' font-weight='700' font-size='48' fill='%234d5f67'%3ER%3C/text%3E%3C/svg%3E" />
   <link rel="manifest" href="./manifest.webmanifest" />
@@ -51,25 +80,25 @@
     <!-- Bas : réglages atteignables au pouce -->
     <div class="controls">
       <div class="chips" id="chips">
-        <button type="button" class="chip" data-cad="165">165</button>
-        <button type="button" class="chip" data-cad="170">170</button>
-        <button type="button" class="chip" data-cad="175">175</button>
-        <button type="button" class="chip" data-cad="180">180</button>
+        <button type="button" class="chip" data-cad="165" aria-pressed="false" aria-label="Régler la cadence à 165 pas par minute">165</button>
+        <button type="button" class="chip" data-cad="170" aria-pressed="false" aria-label="Régler la cadence à 170 pas par minute">170</button>
+        <button type="button" class="chip" data-cad="175" aria-pressed="false" aria-label="Régler la cadence à 175 pas par minute">175</button>
+        <button type="button" class="chip" data-cad="180" aria-pressed="false" aria-label="Régler la cadence à 180 pas par minute">180</button>
       </div>
 
       <div class="adjust-row">
         <button type="button" class="step" id="dec" aria-label="Diminuer la cadence">−</button>
         <button type="button" class="tap" id="tap">
           <span class="tap-title">TAP TEMPO</span>
-          <span class="tap-sub" id="tap-sub">taper le rythme</span>
+          <span class="tap-sub" id="tap-sub">Tapez le rythme</span>
         </button>
         <button type="button" class="step" id="inc" aria-label="Augmenter la cadence">+</button>
       </div>
 
-      <button type="button" class="sound-btn" id="sound-btn">
-        <span class="sound-btn-label">SON</span>
-        <span class="sound-btn-value" id="sound-value">Bloc</span>
-        <span class="sound-btn-chev">⌄</span>
+      <button type="button" class="sound-btn" id="sound-btn" aria-haspopup="dialog" aria-label="Réglages du son — son actuel : Bloc">
+        <span class="sound-btn-label" aria-hidden="true">SON</span>
+        <span class="sound-btn-value" id="sound-value" aria-hidden="true">Bloc</span>
+        <span class="sound-btn-chev" aria-hidden="true">⌄</span>
       </button>
     </div>
 
@@ -84,14 +113,14 @@
       <div class="sheet-handle"></div>
       <div class="sheet-head">
         <span class="sheet-title">Réglages du son</span>
-        <button type="button" class="sheet-ok" id="sheet-ok">OK</button>
+        <button type="button" class="sheet-ok" id="sheet-ok">Terminé</button>
       </div>
 
       <div id="sound-list"><!-- rempli par app.js --></div>
 
       <div class="divider"></div>
 
-      <div class="setting-label">VOLUME DU CLIC</div>
+      <div class="setting-label">VOLUME</div>
       <div class="vol-cells" id="vol-cells"><!-- rempli par app.js --></div>
       <div class="vol-scale">
         <span>FAIBLE</span>

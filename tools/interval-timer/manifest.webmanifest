@@ -1,7 +1,7 @@
 {
-  "name": "Interval Timer",
+  "name": "Timer d'intervalles",
   "short_name": "Timer",
-  "description": "Minimalist interval timer for workouts. Configure work, rest, reps, save presets, run sessions full-screen.",
+  "description": "Minuteur d'intervalles pour vos séances HIIT et fractionné : réglez travail, repos et répétitions, enregistrez vos presets et lancez la séance en plein écran. Hors-ligne.",
   "id": "/tools/interval-timer/",
   "start_url": "./",
   "scope": "./",
@@ -10,7 +10,7 @@
   "background_color": "#0f0f10",
   "theme_color": "#0f0f10",
   "categories": ["health", "fitness", "productivity"],
-  "lang": "en",
+  "lang": "fr",
   "icons": [
     {
       "src": "icon-512.png",
