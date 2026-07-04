@@ -1,11 +1,16 @@
 (function() {
   const STORAGE_KEY = 'interval-timers-v1';
 
+  const TICK_MS = 250;
+
   let timers = [];
   let editingId = null;
   let runState = null;
-  let tickHandle = null;
+  let tickHandle = null;   // fallback setInterval (si Worker indisponible)
+  let worker = null;       // source de ticks non throttlée en arrière-plan
   let wakeLock = null;
+
+  const now = () => performance.now();
 
   // ---------- Storage (localStorage) ----------
   function loadTimers() {
@@ -112,12 +117,35 @@
     if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
   }
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && runState && runState.running) {
-      requestWakeLock();
-    }
+    if (document.visibilityState !== 'visible' || !runState || !runState.running) return;
+    // Le worker a continué à égrener le temps en arrière-plan ; au retour, on
+    // reprend le wake lock, on réveille l'audio et on recale l'affichage aussitôt.
+    requestWakeLock();
+    ensureAudio();
+    tick();
   });
 
   // ---------- Runner ----------
+  const LABELS = { idle: 'Prêt', work: 'Travail', rest: 'Repos', done: 'Terminé' };
+  // Repères sonores/haptiques joués à l'entrée d'une phase (source unique).
+  const CUES = {
+    rest: () => { beep(500, 0.2); vibrate(150); },
+    work: () => { beep(900, 0.2); vibrate(200); },
+    done: () => { finalBeep(); vibrate([200, 100, 200, 100, 400]); },
+  };
+
+  // Durée (s) d'une phase. 'idle'/'done' n'ont pas de durée propre : on renvoie
+  // celle du travail, ce qui donne la bonne barre de progression (0 % / 100 %).
+  function phaseDuration(phase) {
+    return phase === 'rest' ? runState.timer.rest : runState.timer.work;
+  }
+  // Positionne la phase de départ (phase + répétition + temps restant) d'un bloc.
+  function seedPhase(phase, rep) {
+    runState.phase = phase;
+    runState.currentRep = rep;
+    runState.remaining = phaseDuration(phase);
+  }
+
   function openRun(id) {
     const t = timers.find(x => x.id === id);
     if (!t) return;
@@ -126,6 +154,7 @@
       currentRep: 1,
       phase: 'idle',
       remaining: t.work,
+      phaseEndAt: 0,   // instant (performance.now) de fin de phase courante
       running: false
     };
     document.getElementById('run-title').textContent = t.name;
@@ -134,12 +163,15 @@
   }
 
   function updateRunner() {
-    const { timer, currentRep, phase, remaining } = runState;
-    const runner = document.getElementById('runner');
-    runner.className = 'runner ' + phase;
+    const { timer, currentRep, phase, remaining, running } = runState;
+    // Tout l'affichage se dérive de ces champs : on saute le rendu tant qu'ils
+    // n'ont pas bougé (les ticks tombent 4x/s, l'affichage change ~1x/s).
+    const sig = phase + '|' + remaining + '|' + currentRep + '|' + running;
+    if (runState.lastRender === sig) return;
+    runState.lastRender = sig;
 
-    const labels = { idle: 'Prêt', work: 'Travail', rest: 'Repos', done: 'Terminé' };
-    document.getElementById('phase').textContent = labels[phase];
+    document.getElementById('runner').className = 'runner ' + phase;
+    document.getElementById('phase').textContent = LABELS[phase];
 
     const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
     const ss = String(remaining % 60).padStart(2, '0');
@@ -148,73 +180,97 @@
     document.getElementById('reps').textContent =
       phase === 'done' ? 'Bravo, séance terminée 💪' : `Répétition ${currentRep} / ${timer.reps}`;
 
-    const total = phase === 'rest' ? timer.rest : timer.work;
+    const total = phaseDuration(phase);
     const pct = total > 0 ? ((total - remaining) / total) * 100 : 0;
     document.getElementById('progress').style.width = `${pct}%`;
 
-    document.getElementById('btn-play').textContent = runState.running ? 'Pause' : (phase === 'done' ? 'Recommencer' : 'Démarrer');
+    document.getElementById('btn-play').textContent = running ? 'Pause' : (phase === 'done' ? 'Recommencer' : 'Démarrer');
   }
 
+  // Phase suivante dans la séquence work -> (rest?) -> work ... -> done.
+  // Retourne { phase, rep, duration } ou { phase: 'done' }. Toutes les durées
+  // sont >= 1 s (work min 1, rest sauté si 0) : pas de phase à durée nulle.
+  function nextPhase(phase, rep) {
+    const t = runState.timer;
+    if (phase === 'work') {
+      if (rep >= t.reps) return { phase: 'done' };
+      if (t.rest > 0) return { phase: 'rest', rep, duration: t.rest };
+      return { phase: 'work', rep: rep + 1, duration: t.work };
+    }
+    // fin d'un repos -> répétition suivante
+    return { phase: 'work', rep: rep + 1, duration: t.work };
+  }
+
+  // ---------- Ticks (worker non throttlé, fallback setInterval) ----------
+  function startTicks() {
+    stopTicks();
+    if (worker) worker.postMessage({ type: 'start', interval: TICK_MS });
+    else tickHandle = setInterval(tick, TICK_MS);
+  }
+  function stopTicks() {
+    if (worker) worker.postMessage({ type: 'stop' });
+    if (tickHandle) { clearInterval(tickHandle); tickHandle = null; }
+  }
+
+  // Un tick ne mesure rien : il recale `remaining` sur l'horloge réelle et fait
+  // avancer la ou les phases dont l'échéance est passée. Si l'app est restée en
+  // arrière-plan, plusieurs phases peuvent être franchies d'un coup — on ne joue
+  // alors que le repère de la phase où l'on atterrit (pas de spam de bips).
   function tick() {
     if (!runState || !runState.running) return;
-    runState.remaining -= 1;
+    const t = now();
 
-    if (runState.remaining <= 3 && runState.remaining > 0) {
+    let entered = null;
+    while (runState.phase !== 'done' && t >= runState.phaseEndAt) {
+      const nx = nextPhase(runState.phase, runState.currentRep);
+      if (nx.phase === 'done') { runState.phase = 'done'; entered = 'done'; break; }
+      runState.phase = nx.phase;
+      runState.currentRep = nx.rep;
+      runState.phaseEndAt += nx.duration * 1000;
+      entered = nx.phase;
+    }
+
+    if (entered === 'done') {
+      finishRun();
+      updateRunner();
+      return;
+    }
+
+    const prev = runState.remaining;
+    runState.remaining = Math.max(0, Math.ceil((runState.phaseEndAt - t) / 1000));
+
+    if (entered) CUES[entered]();   // entrée d'une nouvelle phase (rest/work)
+    // Décompte des 3 dernières secondes, au passage de chaque seconde entière.
+    else if (runState.remaining < prev && runState.remaining >= 1 && runState.remaining <= 3) {
       beep(700, 0.08);
     }
 
-    if (runState.remaining <= 0) {
-      const t = runState.timer;
-      if (runState.phase === 'rest') {
-        runState.currentRep += 1;
-        runState.phase = 'work';
-        runState.remaining = t.work;
-        beep(900, 0.2);
-        vibrate(200);
-      } else if (runState.phase === 'work') {
-        if (runState.currentRep >= t.reps) {
-          runState.phase = 'done';
-          runState.running = false;
-          runState.remaining = 0;
-          clearInterval(tickHandle);
-          tickHandle = null;
-          finalBeep();
-          vibrate([200, 100, 200, 100, 400]);
-          releaseWakeLock();
-        } else if (t.rest > 0) {
-          runState.phase = 'rest';
-          runState.remaining = t.rest;
-          beep(500, 0.2);
-          vibrate(150);
-        } else {
-          runState.currentRep += 1;
-          runState.remaining = t.work;
-          beep(900, 0.2);
-          vibrate(200);
-        }
-      }
-    }
     updateRunner();
+  }
+
+  function finishRun() {
+    runState.phase = 'done';
+    runState.running = false;
+    runState.remaining = 0;
+    stopTicks();
+    CUES.done();
+    releaseWakeLock();
   }
 
   function togglePlay() {
     if (!runState) return;
-    if (runState.phase === 'done') {
-      runState.currentRep = 1;
-      runState.phase = 'work';
-      runState.remaining = runState.timer.work;
-    } else if (runState.phase === 'idle') {
-      runState.phase = 'work';
-      runState.remaining = runState.timer.work;
-    }
+    // Depuis 'idle' ou 'done', (re)démarre au début du travail ; sinon on reprend
+    // la phase en cours là où elle en était (pause).
+    if (runState.phase === 'idle' || runState.phase === 'done') seedPhase('work', 1);
     runState.running = !runState.running;
     if (runState.running) {
       ensureAudio();
       requestWakeLock();
-      if (tickHandle) clearInterval(tickHandle);
-      tickHandle = setInterval(tick, 1000);
+      // Ancre la fin de phase sur l'horloge réelle (reprend `remaining` tel quel).
+      runState.phaseEndAt = now() + runState.remaining * 1000;
+      startTicks();
     } else {
-      if (tickHandle) { clearInterval(tickHandle); tickHandle = null; }
+      stopTicks();
       releaseWakeLock();
     }
     updateRunner();
@@ -222,17 +278,16 @@
 
   function resetRun() {
     if (!runState) return;
-    if (tickHandle) { clearInterval(tickHandle); tickHandle = null; }
+    stopTicks();
     releaseWakeLock();
-    runState.currentRep = 1;
-    runState.phase = 'idle';
-    runState.remaining = runState.timer.work;
+    seedPhase('idle', 1);
+    runState.phaseEndAt = 0;
     runState.running = false;
     updateRunner();
   }
 
   function exitRun() {
-    if (tickHandle) { clearInterval(tickHandle); tickHandle = null; }
+    stopTicks();
     releaseWakeLock();
     runState = null;
     show('screen-list');
@@ -310,12 +365,29 @@
     lastTouch = now;
   }, { passive: false });
 
-  // Service worker (silently fails on file:// or unsupported browsers)
+  // Service worker: register + auto-update installed PWAs.
+  // (silently fails on file:// or unsupported browsers)
   if ('serviceWorker' in navigator) {
+    // A new worker took control -> reload once to pick up fresh assets.
+    // Skip the very first install (no prior controller) to avoid a reload loop.
+    let hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController) { hadController = true; return; }
+      window.location.reload();
+    });
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+      navigator.serviceWorker.register('./sw.js').then((reg) => {
+        // Check for a new version each time the app is reopened/refocused.
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') reg.update();
+        });
+      }).catch(() => {});
     });
   }
+
+  // Source de ticks : Web Worker (non throttlé écran verrouillé), fallback setInterval.
+  try { worker = new Worker('./scheduler.worker.js'); worker.onmessage = tick; }
+  catch (e) { worker = null; }
 
   loadTimers();
   renderList();

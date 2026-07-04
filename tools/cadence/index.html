@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0a0f12" />
+  <meta name="description" content="Métronome de course : réglez votre cadence (pas/min) et calez votre foulée sur un battement audio précis, sans dérive, par-dessus votre musique." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Cadence" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>Cadence — Métronome de course</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='23' fill='%2316232a'/%3E%3Ctext x='28' y='66' font-family='Arial' font-weight='700' font-size='48' fill='%23ffc266'%3EL%3C/text%3E%3Ctext x='54' y='66' font-family='Arial' font-weight='700' font-size='48' fill='%234d5f67'%3ER%3C/text%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='23' fill='%2316232a'/%3E%3Ctext x='28' y='66' font-family='Arial' font-weight='700' font-size='48' fill='%23ffc266'%3EL%3C/text%3E%3Ctext x='54' y='66' font-family='Arial' font-weight='700' font-size='48' fill='%234d5f67'%3ER%3C/text%3E%3C/svg%3E" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app" id="app">
+
+    <!-- Top: statut + chrono session -->
+    <div class="topbar">
+      <span class="status" id="status">
+        <span class="status-dot"></span>
+        <span id="status-label">PRÊT</span>
+      </span>
+      <span class="session">
+        <span class="session-label">SESSION</span>
+        <span class="session-time" id="chrono">00:00</span>
+      </span>
+    </div>
+
+    <!-- Centre : appuis L/R + lecture de la cadence -->
+    <div class="stage">
+      <div class="pads">
+        <div class="pad" id="pad-l" aria-hidden="true">
+          <span class="pad-letter">L</span>
+          <div class="pad-lit"><span class="pad-letter">L</span></div>
+        </div>
+        <div class="pad" id="pad-r" aria-hidden="true">
+          <span class="pad-letter">R</span>
+          <div class="pad-lit"><span class="pad-letter">R</span></div>
+        </div>
+      </div>
+      <div class="readout">
+        <span class="cadence" id="cadence" aria-live="polite">172</span>
+        <span class="cadence-unit">PAS / MIN</span>
+      </div>
+    </div>
+
+    <!-- Bas : réglages atteignables au pouce -->
+    <div class="controls">
+      <div class="chips" id="chips">
+        <button type="button" class="chip" data-cad="165">165</button>
+        <button type="button" class="chip" data-cad="170">170</button>
+        <button type="button" class="chip" data-cad="175">175</button>
+        <button type="button" class="chip" data-cad="180">180</button>
+      </div>
+
+      <div class="adjust-row">
+        <button type="button" class="step" id="dec" aria-label="Diminuer la cadence">−</button>
+        <button type="button" class="tap" id="tap">
+          <span class="tap-title">TAP TEMPO</span>
+          <span class="tap-sub" id="tap-sub">taper le rythme</span>
+        </button>
+        <button type="button" class="step" id="inc" aria-label="Augmenter la cadence">+</button>
+      </div>
+
+      <button type="button" class="sound-btn" id="sound-btn">
+        <span class="sound-btn-label">SON</span>
+        <span class="sound-btn-value" id="sound-value">Bloc</span>
+        <span class="sound-btn-chev">⌄</span>
+      </button>
+    </div>
+
+    <button type="button" class="start-btn is-idle" id="start">
+      <span class="start-icon" id="start-icon">▶</span>
+      <span id="start-label">DÉMARRER</span>
+    </button>
+
+    <!-- Feuille de réglages du son -->
+    <div class="scrim" id="scrim"></div>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Réglages du son">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <span class="sheet-title">Réglages du son</span>
+        <button type="button" class="sheet-ok" id="sheet-ok">OK</button>
+      </div>
+
+      <div id="sound-list"><!-- rempli par app.js --></div>
+
+      <div class="divider"></div>
+
+      <div class="setting-label">VOLUME DU CLIC</div>
+      <div class="vol-cells" id="vol-cells"><!-- rempli par app.js --></div>
+      <div class="vol-scale">
+        <span>FAIBLE</span>
+        <span>FORT</span>
+      </div>
+
+      <div class="setting-label" style="margin-top:20px;">MOTIF DE BATTEMENT</div>
+      <div class="patterns" id="patterns"><!-- rempli par app.js --></div>
+    </div>
+
+    <!-- Splash -->
+    <div class="splash" id="splash" role="button" tabindex="0" aria-label="Entrer dans l'application">
+      <div class="splash-marks">
+        <div class="splash-mark"><span>L</span></div>
+        <div class="splash-mark splash-mark-r"><span>R</span></div>
+      </div>
+      <span class="splash-title">Cadence</span>
+      <span class="splash-sub">MÉTRONOME DE COURSE</span>
+      <span class="splash-hint">TOUCHER POUR ENTRER</span>
+    </div>
+
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf dist && vite build && cp -R tools/interval-timer dist/tools/interval-timer && cp home/index.html dist/index.html",
+    "build": "rm -rf dist && vite build && cp -R tools/interval-timer dist/tools/interval-timer && cp -R tools/cadence dist/tools/cadence && rm -f dist/tools/cadence/*.md && cp home/index.html dist/index.html && mkdir -p dist/.well-known && cp .well-known/assetlinks.json dist/.well-known/assetlinks.json",
     "preview": "vite preview",
     "start": "vite preview"
   },
@@ -24,6 +24,7 @@
     "autoprefixer": "^10.4.23",
     "concurrently": "^9.2.1",
     "postcss": "^8.5.6",
+    "sharp": "^0.35.3",
     "tailwindcss": "^3.4.19",
     "vite": "^7.3.1"
   },
