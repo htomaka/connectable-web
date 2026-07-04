@@ -1,7 +1,7 @@
 // Minimal offline-first service worker.
 // Caches the app shell and serves it offline.
 
-const CACHE = 'interval-timer-v6';
+const CACHE = 'interval-timer-v7';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './scheduler.worker.js', './manifest.webmanifest', './icon-512.png', './icon-512-maskable.png'];
 
 self.addEventListener('install', (e) => {

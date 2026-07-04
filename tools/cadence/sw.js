@@ -1,6 +1,6 @@
 // Service worker offline-first : cache l'app-shell et la sert hors-ligne (FR-21).
 
-const CACHE = 'cadence-v3';
+const CACHE = 'cadence-v4';
 const ASSETS = [
   './',
   './index.html',
