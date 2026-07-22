@@ -3,64 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Outils web gratuits pour la course et l'agilité</title>
-    <meta name="description" content="Trois outils web gratuits : métronome de course (pas/min), timer d'intervalles HIIT et calculateur de capacité de sprint agile. Hors-ligne, sans installation.">
+    <title>Connectable, je conçois, je code, je communique</title>
+    <meta name="description" content="Connectable, je conçois, je code, je communique. Beacon Screener, Cashbah et des outils web gratuits qui marchent hors ligne.">
+    <link rel="canonical" href="https://connectable-web.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Connectable, je conçois, je code, je communique">
+    <meta property="og:description" content="Beacon Screener, Cashbah et des outils web gratuits qui marchent hors ligne.">
+    <meta property="og:url" content="https://connectable-web.com/">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
+        :root {
+            --bg: #f9fafb;
+            --card: #ffffff;
+            --text: #111827;
+            --muted: #6b7280;
+            --faint: #9ca3af;
+            --line: #e5e7eb;
+            --accent: #2563eb;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0b0f17;
+                --card: #131926;
+                --text: #f3f4f6;
+                --muted: #9aa4b2;
+                --faint: #6b7280;
+                --line: #232b3a;
+                --accent: #60a5fa;
+            }
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             max-width: 640px;
             margin: 0 auto;
-            padding: 4rem 1.5rem;
-            color: #1f2937;
-            background: #f9fafb;
+            padding: 4rem 1.5rem 5rem;
+            color: var(--text);
+            background: var(--bg);
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
-        h1 { font-size: 1.75rem; margin: 0 0 0.25rem; }
-        .tagline { color: #6b7280; margin: 0 0 2.5rem; }
+        header { margin-bottom: 3rem; }
+        h1 {
+            font-size: clamp(2.25rem, 8vw, 3rem);
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin: 0 0 0.5rem;
+        }
+        .tagline {
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin: 0;
+        }
+        h2 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--faint);
+            font-weight: 600;
+            margin: 0 0 0.875rem;
+        }
+        section + section { margin-top: 2.75rem; }
         ul { list-style: none; padding: 0; margin: 0; }
         li + li { margin-top: 0.75rem; }
-        a.tool {
+        a.card {
             display: block;
             padding: 1.25rem 1.5rem;
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 0.625rem;
             color: inherit;
             text-decoration: none;
             transition: border-color 0.15s ease, transform 0.15s ease;
         }
-        a.tool:hover { border-color: #2563eb; transform: translateY(-1px); }
-        .tool-name { font-weight: 600; font-size: 1.05rem; }
-        .tool-desc { color: #6b7280; font-size: 0.925rem; margin-top: 0.25rem; }
-        footer { margin-top: 3rem; color: #9ca3af; font-size: 0.85rem; }
+        a.card:hover { border-color: var(--accent); transform: translateY(-1px); }
+        a.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .card-name { font-weight: 600; font-size: 1.05rem; }
+        .card-desc { color: var(--muted); font-size: 0.925rem; margin-top: 0.25rem; }
+        .card.brand { border-left: 3px solid var(--accent); }
+        .card.brand .card-name::after {
+            content: "↗";
+            font-size: 0.85em;
+            margin-left: 0.4rem;
+            color: var(--accent);
+        }
+        footer { margin-top: 3.5rem; color: var(--faint); font-size: 0.85rem; }
         footer a { color: inherit; }
     </style>
 </head>
 <body>
-    <h1>Connectable Web</h1>
-    <p class="tagline">Des outils web rapides, gratuits et hors-ligne pour le sport et le travail.</p>
-    <ul>
-        <li>
-            <a class="tool" href="/tools/velocity-calculator/">
-                <div class="tool-name">Calculateur de capacité de sprint</div>
-                <div class="tool-desc">Capacité de sprint agile à partir de la vélocité, des jours ouvrés et des absences.</div>
-            </a>
-        </li>
-        <li>
-            <a class="tool" href="/tools/interval-timer/">
-                <div class="tool-name">Timer d'intervalles</div>
-                <div class="tool-desc">Rythmez vos séances HIIT et fractionné : travail, repos, répétitions. Installable, hors-ligne (PWA).</div>
-            </a>
-        </li>
-        <li>
-            <a class="tool" href="/tools/cadence/">
-                <div class="tool-name">Cadence</div>
-                <div class="tool-desc">Métronome de course : calez votre foulée sur un battement audio précis, sans dérive. Installable, hors-ligne (PWA).</div>
-            </a>
-        </li>
-    </ul>
+    <header>
+        <h1>Connectable</h1>
+        <p class="tagline">Je conçois, je code, je communique.</p>
+    </header>
+
+    <section>
+        <h2>Projets</h2>
+        <ul>
+            <li>
+                <a class="card brand" href="https://www.beaconscreener.com/" target="_blank" rel="noopener">
+                    <div class="card-name">Beacon Screener</div>
+                    <div class="card-desc">Un screener d'ETF. Plus de 5 500 fonds classés par objectif. Indépendant, sans affiliation.</div>
+                </a>
+            </li>
+            <li>
+                <a class="card brand" href="https://cashbah.app/" target="_blank" rel="noopener">
+                    <div class="card-name">Cashbah</div>
+                    <div class="card-desc">Une app de budget. Règle 50/30/20, comptes bancaires synchronisés, suivi du patrimoine.</div>
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Outils</h2>
+        <ul>
+            <li>
+                <a class="card" href="/tools/velocity-calculator/">
+                    <div class="card-name">Calculateur de capacité de sprint</div>
+                    <div class="card-desc">Calcule la capacité d'un sprint à partir de la vélocité, des jours ouvrés et des absences.</div>
+                </a>
+            </li>
+            <li>
+                <a class="card" href="/tools/interval-timer/">
+                    <div class="card-name">Timer d'intervalles</div>
+                    <div class="card-desc">Pour le HIIT et le fractionné. Travail, repos, répétitions. S'installe et marche hors ligne.</div>
+                </a>
+            </li>
+            <li>
+                <a class="card" href="/tools/cadence/">
+                    <div class="card-name">Cadence</div>
+                    <div class="card-desc">Un métronome de course pour calquer sa foulée sur un tempo. S'installe et marche hors ligne.</div>
+                </a>
+            </li>
+        </ul>
+    </section>
+
     <footer>
         <a href="https://github.com/htomaka/connectable-web">Code source</a>
     </footer>
